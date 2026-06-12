@@ -1,4 +1,7 @@
-
 export default function Home() {
-  return <h1>✅ App is working</h1>;
+  return (
+    <div>
+      <h1>✅ AI & Beyond Tech is LIVE</h1>
+    </div>
+  );
 }
