@@ -1,5 +1,17 @@
 import "./globals.css";
 
+
+export const metadata = {
+  title: {
+    default: "AI & Beyond Tech",
+    template: "%s | AI & Beyond Tech",
+  },
+  icons:{
+    icon: "/favicon.ico"
+  },
+  description: "Exploring AI, Automation & The Future of Technology",
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -7,7 +19,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <div className="layout">
+          <main className="main-content">{children}</main>
+
+          {/* ✅ Footer moved to layout */}
+          <footer className="footer">
+            © AI & Beyond Tech
+          </footer>
+        </div>
+      </body>
     </html>
   );
 }
