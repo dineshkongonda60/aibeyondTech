@@ -1,5 +1,14 @@
 [
   {
+    "title": "AI in Gaming",
+    "slug": "ai-in-gaming",
+    "description": "Explore the transformative role of artificial intelligence in the gaming industry, from NPC behavior to procedural content generation.",
+    "tags": [
+      "AI"
+    ],
+    "date": "2026-06-15T10:28:07.539Z"
+  },
+  {
     "title": "AI in Healthcare: Transforming Patient Care and Outcomes",
     "slug": "ai-in-healthcare",
     "description": "Explore how AI is revolutionizing healthcare through improved diagnostics, personalized treatment, and operational efficiency.",
