@@ -1,5 +1,15 @@
 [
   {
+    "title": "Understanding the Difference: AI vs RPA",
+    "slug": "ai-vs-rpa",
+    "description": "Explore the key differences between Artificial Intelligence (AI) and Robotic Process Automation (RPA) to understand their unique functionalities and applications.",
+    "image": "https://raw.githubusercontent.com/dineshkongonda60/aibeyondTech/main/public/blog-images/ai-vs-rpa.png",
+    "tags": [
+      "AI"
+    ],
+    "date": "2026-06-15T13:47:27.771Z"
+  },
+  {
     "title": "The Impact of AI in Finance",
     "slug": "ai-in-finance",
     "description": "Explore how AI is transforming the finance industry, improving efficiency, accuracy, and customer service.",
