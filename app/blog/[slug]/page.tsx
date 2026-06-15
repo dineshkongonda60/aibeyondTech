@@ -24,6 +24,11 @@ export async function generateMetadata({ params }: any) {
     title: blog.title,
     description: blog.description,
 
+    
+    alternates: {
+          canonical: url,
+        },
+
     openGraph: {
       title: blog.title,
       description: blog.description,
@@ -43,7 +48,7 @@ export async function generateMetadata({ params }: any) {
       card: "summary_large_image",
       title: blog.title,
       description: blog.description,
-      images: ["https://aibeyond-tech.vercel.app/logo.png"],
+      images: [blog.image],
     },
   };
 }
