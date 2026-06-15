@@ -42,9 +42,10 @@
     "date": "2026-06-15T10:30:31.024Z"
   },
   {
-    "title": "AI in Gaming",
+    "title": "AI in Gaming: Transforming the Player Experience",
     "slug": "ai-in-gaming",
-    "description": "Explore the transformative role of artificial intelligence in the gaming industry, from NPC behavior to procedural content generation.",
+    "description": "Explore how AI is revolutionizing the gaming industry, from smarter NPCs to personalized gaming experiences.",
+    "image": "https://raw.githubusercontent.com/dineshkongonda60/aibeyondTech/main/public/blog-images/ai-in-gaming.png",
     "tags": [
       "AI"
     ],
