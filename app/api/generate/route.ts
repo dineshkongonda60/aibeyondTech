@@ -109,9 +109,27 @@ function buildHTML(data: any, imageUrl: string, readTime: number) {
 
 <p>${data.introduction.replace(/\n\n/g, "</p><p>")}</p>
 
-${data.sections.map((s: any) => `
+${data.sections.map((s: any, index: number) => `
   <h2>${s.heading}</h2>
   <p>${s.content.replace(/\n\n/g, "</p><p>")}</p>
+    
+${index === 1 ? `
+    <div style="margin:30px 0;">
+      <!-- Ad -->
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9814863623957523"
+     crossorigin="anonymous"></script>
+        <!-- Blog-Ad-Unit -->
+        <ins class="adsbygoogle"
+            style="display:block"
+            data-ad-client="ca-pub-9814863623957523"
+            data-ad-slot="2586673450"
+            data-ad-format="auto"
+            data-full-width-responsive="true"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+            </div>
+  ` : ""}
 `).join("")}
 
 <h2>Conclusion</h2>
