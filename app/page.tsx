@@ -67,13 +67,27 @@ export default function Home() {
           ) : (
             filtered.map((b: any) => (
               <div key={b.slug} className="card">
-                <div>
+                
+              {/* ✅ Thumbnail */}
+                
+              <img
+                src={b.image || "/logo.png"}   // ✅ dynamic image
+                alt={b.title}
+                className="card-img"
+                onError={(e) => {
+                  e.currentTarget.src = "/logo.png";  // ✅ fallback
+                }}
+              />
+
+
+                <div className="card-body">
                 <h3>{b.title}</h3>
                 <p>{b.description}</p>
-                </div>
                 <Link href={`/blog/${b.slug}`}>
                   <button>Read More →</button>
                 </Link>
+                </div>
+                
               </div>
             ))
           )}
