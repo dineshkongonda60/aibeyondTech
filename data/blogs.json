@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "title": "The Impact of AI in Banking",
+    "slug": "ai-in-banking",
+    "description": "Explore how AI is transforming the banking sector, enhancing efficiency, customer experience, and security.",
+    "image": "/logo.png",
+    "tags": [
+      "AI",
+      "Banking",
+      "Technology",
+      "Finance"
+    ],
+    "date": "2026-06-15T08:39:14.468Z"
+  }
+]
