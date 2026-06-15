@@ -38,6 +38,49 @@ function buildHTML(data: any, imageUrl: string, readTime: number) {
     color: white;
     text-shadow: 0 3px 10px rgba(0,0,0,0.7);
   }
+    
+/* ✅ DARK OVERLAY */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.75),
+    rgba(0,0,0,0.3),
+    rgba(0,0,0,0.1)
+  );
+}
+
+
+/* ✅ TEXT CONTENT */
+.hero-content {
+  position: absolute;
+  bottom: 30px;
+  left: 40px;
+  right: 40px;
+  color: white;
+}
+
+.hero-content h1 {
+  font-size: 40px;
+  line-height: 1.2;
+  margin-bottom: 10px;
+  text-shadow: 0 3px 15px rgba(0,0,0,0.8);
+}
+
+.meta {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* ✅ MOBILE */
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 26px;
+  }
+}
+
+
 
   .overlay h1 {
     font-size: 38px;
@@ -94,12 +137,16 @@ function buildHTML(data: any, imageUrl: string, readTime: number) {
 
 <div class="hero">
   <img src="${imageUrl}" />
-  <div class="overlay">
-    <h1>${data.title}</h1>
-    <div class="meta">
-      AI & Beyond Tech · ${readTime} min read
-    </div>
+  
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+        <h1>${data.title}</h1>
+        <p class="meta">
+        AI & Beyond Tech · ${readTime} min read
+        </p>
   </div>
+
 </div>
 
 <div class="container">
@@ -192,7 +239,7 @@ Rules:
     // ✅ 2. Generate Image
     const imageResponse = await client.images.generate({
       model: "gpt-image-1",
-      prompt: `Futuristic minimal AI blog cover image about ${topic}`,
+      prompt: `Minimal abstract technology background related to ${topic}, no text, no words, clean modern gradient, futuristic design`,
       size: "1536x1024",
     });
 
@@ -202,7 +249,7 @@ Rules:
 try {
   const imageResponse = await client.images.generate({
     model: "gpt-image-1",
-    prompt: `Futuristic minimal AI blog cover image about ${topic}`,
+    prompt: `Minimal abstract technology background related to ${topic}, no text, no words, clean modern gradient, futuristic design`,
     size: "1536x1024",
   });
 
