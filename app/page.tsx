@@ -67,9 +67,10 @@ export default function Home() {
           ) : (
             filtered.map((b: any) => (
               <div key={b.slug} className="card">
+                <div>
                 <h3>{b.title}</h3>
                 <p>{b.description}</p>
-
+                </div>
                 <Link href={`/blog/${b.slug}`}>
                   <button>Read More →</button>
                 </Link>
