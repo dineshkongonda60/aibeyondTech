@@ -1,17 +1,148 @@
 import OpenAI from "openai";
 
+// ✅ HTML Builder (Premium UI + Image + SEO)
+function buildHTML(data: any, imageUrl: string, readTime: number) {
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>${data.title}</title>
+<meta name="description" content="${data.meta_description}" />
+
+<style>
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: #f4f6f9;
+  }
+
+  .hero {
+    position: relative;
+    height: 400px;
+    overflow: hidden;
+  }
+
+  .hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .overlay {
+    position: absolute;
+    bottom: 30px;
+    left: 40px;
+    color: white;
+    text-shadow: 0 3px 10px rgba(0,0,0,0.7);
+  }
+
+  .overlay h1 {
+    font-size: 38px;
+    margin: 0;
+  }
+
+  .meta {
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  .container {
+    max-width: 850px;
+    margin: -40px auto 40px;
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  }
+
+  h2 {
+    color: #2c5364;
+    margin-top: 30px;
+  }
+
+  p {
+    line-height: 1.8;
+    font-size: 17px;
+    color: #333;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 6px 12px;
+    margin: 5px;
+    border-radius: 20px;
+    background: #2c5364;
+    color: white;
+    font-size: 13px;
+  }
+
+  @media (max-width: 768px) {
+    .overlay h1 {
+      font-size: 26px;
+    }
+    .container {
+      padding: 20px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="hero">
+  <img src="${imageUrl}" />
+  <div class="overlay">
+    <h1>${data.title}</h1>
+    <div class="meta">
+      AI & Beyond Tech · ${readTime} min read
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<p>${data.introduction.replace(/\n\n/g, "</p><p>")}</p>
+
+${data.sections.map((s: any) => `
+  <h2>${s.heading}</h2>
+  <p>${s.content.replace(/\n\n/g, "</p><p>")}</p>
+`).join("")}
+
+<h2>Conclusion</h2>
+<p>${data.conclusion.replace(/\n\n/g, "</p><p>")}</p>
+
+<div>
+${data.tags.map((t: string) => `<span class="tag">${t}</span>`).join("")}
+</div>
+
+</div>
+
+</body>
+</html>
+`;
+}
+
+// ✅ API Route
 export async function POST(req: Request) {
   try {
     const { topic } = await req.json();
+
+    if (!topic) {
+      return Response.json({ error: "Topic required" }, { status: 400 });
+    }
 
     const client = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
 
+    // ✅ Agent-style structured prompt
     const SYSTEM_PROMPT = `
-You are an expert blog writer and SEO specialist.
+You are an expert blog writer.
 
-Return ONLY valid JSON with this structure:
+Return ONLY valid JSON (no markdown, no extra text):
 
 {
   "title": "string",
@@ -28,11 +159,12 @@ Return ONLY valid JSON with this structure:
 }
 
 Rules:
-- Make it engaging and professional
-- Write real content (not placeholders)
-- Use paragraphs separated by \\n\\n
+- Use professional tone
+- Write real content
+- Separate paragraphs using \\n\\n
 `;
 
+    // ✅ 1. Generate blog JSON
     const response = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -41,195 +173,69 @@ Rules:
       ],
     });
 
-    
-const raw = response.choices?.[0]?.message?.content;
+    const raw = response.choices?.[0]?.message?.content;
 
-if (!raw) {
-  throw new Error("OpenAI returned empty response");
+    if (!raw) throw new Error("Empty response from OpenAI");
+
+    // ✅ Clean + Extract JSON safely
+    const cleaned = raw
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+
+    const match = cleaned.match(/\{[\s\S]*\}/);
+
+    if (!match) throw new Error("Invalid JSON format");
+
+    const blogData = JSON.parse(match[0]);
+
+    // ✅ 2. Generate Image
+    const imageResponse = await client.images.generate({
+      model: "gpt-image-1",
+      prompt: `Futuristic minimal AI blog cover image about ${topic}`,
+      size: "1792x1024",
+    });
+
+   let imageUrl = "";
+
+// ✅ Generate image safely
+try {
+  const imageResponse = await client.images.generate({
+    model: "gpt-image-1",
+    prompt: `Futuristic minimal AI blog cover image about ${topic}`,
+    size: "1792x1024",
+  });
+
+  const imageBase64 = imageResponse?.data?.[0]?.b64_json;
+
+  if (imageBase64) {
+    imageUrl = `data:image/png;base64,${imageBase64}`;
+  } else {
+    console.warn("⚠️ Image generation returned empty");
+    imageUrl = "/logo.png"; // ✅ fallback image
+  }
+
+} catch (err) {
+  console.warn("⚠️ Image generation failed:", err);
+  imageUrl = "/logo.png"; // ✅ fallback
 }
 
-// 🧹 Clean response
-const cleaned = raw
-  .replace(/```json/g, "")
-  .replace(/```/g, "")
-  .trim();
+    // ✅ 3. Calculate reading time
+    const words = JSON.stringify(blogData).split(" ").length;
+    const readTime = Math.ceil(words / 200);
 
-// 🔍 Extract JSON safely
-const match = cleaned.match(/\{[\s\S]*\}/);
-
-if (!match) {
-  throw new Error("Invalid JSON format from OpenAI");
-}
-
-const json = JSON.parse(match[0]);
-
-
-
-    // ✅ Convert JSON → HTML
-    const html = buildHTML(json);
+    // ✅ 4. Build premium HTML
+    const html = buildHTML(blogData, imageUrl, readTime);
 
     return Response.json({ html });
 
   } catch (error: any) {
-    console.error(error);
-    return Response.json({ error: "Failed to generate blog" }, { status: 500 });
+    console.error("❌ Generate API Error:", error);
+
+    return Response.json(
+      { error: error.message || "Failed to generate blog" },
+      { status: 500 }
+    );
   }
 }
-
-// ✅ HTML Builder (Agent Style)
-function buildHTML(data: any) {
-  return `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <title>${data.title}</title>
-  <meta name="description" content="${data.meta_description}" />
-
-  <!-- ✅ Open Graph (LinkedIn/Twitter) -->
-  <meta property="og:title" content="${data.title}" />
-  <meta property="og:description" content="${data.meta_description}" />
-  <meta property="og:type" content="article" />
-  <meta property="og:url" content="https://aibeyond-tech.vercel.app" />
-  <meta property="og:image" content="/logo.png" />
-
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="${data.title}" />
-  <meta name="twitter:description" content="${data.meta_description}" />
-
-  <!-- ✅ Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: #f4f6f9;
-    }
-
-    /* ✅ HERO */
-    .hero {
-      background: linear-gradient(120deg, #1f4037, #99f2c8);
-      color: white;
-      padding: 60px 20px;
-      text-align: center;
-    }
-
-    .hero h1 {
-      font-size: 42px;
-      margin-bottom: 10px;
-    }
-
-    .meta {
-      opacity: 0.9;
-      font-size: 14px;
-    }
-
-    /* ✅ CONTENT */
-    .container {
-      max-width: 850px;
-      margin: -40px auto 40px;
-      background: white;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    }
-
-    h2 {
-      margin-top: 30px;
-      color: #2c5364;
-    }
-
-    p {
-      line-height: 1.8;
-      margin: 12px 0;
-      color: #333;
-      font-size: 17px;
-    }
-
-    /* ✅ TAGS */
-    .tags {
-      margin-top: 30px;
-    }
-
-    .tag {
-      display: inline-block;
-      padding: 6px 12px;
-      margin: 5px;
-      border-radius: 20px;
-      background: #2c5364;
-      color: white;
-      font-size: 13px;
-    }
-
-    /* ✅ SHARE */
-    .share {
-      margin-top: 40px;
-      padding-top: 20px;
-      border-top: 1px solid #ddd;
-      text-align: center;
-    }
-
-    .share a {
-      margin: 0 10px;
-      text-decoration: none;
-      color: #2c5364;
-      font-weight: 600;
-    }
-
-    /* ✅ MOBILE */
-    @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 28px;
-      }
-
-      .container {
-        padding: 20px;
-      }
-    }
-  </style>
-</head>
-
-<body>
-
-  <!-- ✅ HERO -->
-  <div class="hero">
-    <h1>${data.title}</h1>
-    <div class="meta">
-      By AI & Beyond Tech · ${new Date().toDateString()}
-    </div>
-  </div>
-
-  <!-- ✅ CONTENT -->
-  <div class="container">
-
-    <p>${data.introduction.replace(/\n\n/g, "</p><p>")}</p>
-
-    ${data.sections.map((s: any) => `
-      <h2>${s.heading}</h2>
-      <p>${s.content.replace(/\n\n/g, "</p><p>")}</p>
-    `).join("")}
-
-    <h2>Conclusion</h2>
-    <p>${data.conclusion.replace(/\n\n/g, "</p><p>")}</p>
-
-    <!-- ✅ TAGS -->
-    <div class="tags">
-      ${data.tags.map((t: string) => `<span class="tag">${t}</span>`).join("")}
-    </div>
-
-    <!-- ✅ SHARE -->
-    <div class="share">
-      <p>Share this article:</p>
-      <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://aibeyond-tech.vercel.app">LinkedIn</a>
-      <a href="https://twitter.com/intent/tweet?url=https://aibeyond-tech.vercel.app">Twitter</a>
-    </div>
-
-  </div>
-
-</body>
-</html>
-`;
-}
+``
