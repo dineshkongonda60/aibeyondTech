@@ -1,5 +1,15 @@
 [
   {
+    "title": "The Impact of AI in Finance",
+    "slug": "ai-in-finance",
+    "description": "Explore how AI is transforming the finance industry, improving efficiency, accuracy, and customer service.",
+    "image": "https://raw.githubusercontent.com/dineshkongonda60/aibeyondTech/main/public/blog-images/ai-in-finance.png",
+    "tags": [
+      "AI"
+    ],
+    "date": "2026-06-15T13:06:17.522Z"
+  },
+  {
     "title": "AI in Finance: Transforming the Financial Landscape",
     "slug": "ai-in-finance",
     "description": "Explore the transformative role of AI in finance, from risk assessment to personalized banking experiences.",
