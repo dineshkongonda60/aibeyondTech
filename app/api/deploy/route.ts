@@ -1,49 +1,39 @@
 export async function POST(req: Request) {
-  const { topic, html } = await req.json();
+  const { topic, html, blogData, imageUrl } = await req.json();
 
-  const slug = topic
-    .toLowerCase()
-    .replace(/[^\w\s]/g, "")
-    .replace(/\s+/g, "-");
+  const slug = topic.toLowerCase().replace(/\s+/g, "-");
 
-  const blogFile = `blogs/${slug}.html`;
+  const repo = process.env.GITHUB_REPO!;
+  const token = process.env.GITHUB_TOKEN!;
 
-  // ✅ Fetch existing blogs.json
-  const repo = process.env.GITHUB_REPO;
-  const token = process.env.GITHUB_TOKEN;
-
+  // ✅ Get existing blogs.json
   const res = await fetch(
     `https://api.github.com/repos/${repo}/contents/data/blogs.json`,
     {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     }
   );
 
   const fileData = await res.json();
-  const existingContent = JSON.parse(
+  const existing = JSON.parse(
     Buffer.from(fileData.content, "base64").toString()
   );
 
-  // ✅ Add new blog entry
+  // ✅ Store metadata
   const newBlog = {
-    title: topic,
+    title: blogData.title,
     slug,
-    description: `Blog about ${topic}`,
-    tags: topic.split(" "),
+    description: blogData.meta_description,
+    image: "/logo.png", // ⚠ replace later with real URL
+    tags: blogData.tags,
     date: new Date().toISOString(),
   };
 
-  const updated = [newBlog, ...existingContent];
-
-  const updatedBase64 = Buffer.from(
-    JSON.stringify(updated, null, 2)
-  ).toString("base64");
+  const updated = [newBlog, ...existing];
 
   // ✅ Push blog HTML
   await fetch(
-    `https://api.github.com/repos/${repo}/contents/${blogFile}`,
+    `https://api.github.com/repos/${repo}/contents/blogs/${slug}.html`,
     {
       method: "PUT",
       headers: {
@@ -56,7 +46,7 @@ export async function POST(req: Request) {
     }
   );
 
-  // ✅ Update blogs.json
+  // ✅ Update JSON
   await fetch(
     `https://api.github.com/repos/${repo}/contents/data/blogs.json`,
     {
@@ -65,8 +55,8 @@ export async function POST(req: Request) {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        message: "Update blogs list",
-        content: updatedBase64,
+        message: "Update blogs",
+        content: Buffer.from(JSON.stringify(updated, null, 2)).toString("base64"),
         sha: fileData.sha,
       }),
     }

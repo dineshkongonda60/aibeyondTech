@@ -5,13 +5,17 @@ import { useState } from "react";
 export default function Admin() {
   const [topic, setTopic] = useState("");
   const [html, setHtml] = useState("");
+  
+const [blogData, setBlogData] = useState<any>(null);
+const [imageUrl, setImageUrl] = useState("");
 
-  const generate = async () => {
+
+const generate = async () => {
   try {
     const res = await fetch("/api/generate", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",  // ✅ REQUIRED
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ topic }),
     });
@@ -23,21 +27,34 @@ export default function Admin() {
       return;
     }
 
+    // ✅ Store everything
     setHtml(data.html);
+    setBlogData(data.blogData);
+    setImageUrl(data.imageUrl);
+
   } catch (err) {
     console.error(err);
-    alert("Failed to generate blog");
+    alert("Generate failed");
   }
 };
 
+const deploy = async () => {
+  await fetch("/api/deploy", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      topic,
+      html,
+      blogData,
+      imageUrl
+    }),
+  });
 
-  const deploy = async () => {
-    await fetch("/api/deploy", {
-      method: "POST",
-      body: JSON.stringify({ topic, html }),
-    });
-    alert("✅ Blog Deployed!");
-  };
+  alert("✅ Blog Deployed!");
+};
+
 
   return (
     <div style={{ padding: "30px" }}>

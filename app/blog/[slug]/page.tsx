@@ -8,11 +8,46 @@ type Props = {
   };
 };
 
+
 export async function generateMetadata({ params }: any) {
+  const blogs = JSON.parse(
+    fs.readFileSync(path.join(process.cwd(), "data/blogs.json"), "utf-8")
+  );
+
+  const blog = blogs.find((b: any) => b.slug === params.slug);
+
+  if (!blog) return {};
+
+  const url = `https://aibeyond-tech.vercel.app/blog/${blog.slug}`;
+
   return {
-    title: params.slug.replace(/-/g, " "),
+    title: blog.title,
+    description: blog.description,
+
+    openGraph: {
+      title: blog.title,
+      description: blog.description,
+      url,
+      siteName: "AI & Beyond Tech",
+      images: [
+        {
+          url: "https://aibeyond-tech.vercel.app/logo.png",
+          width: 1200,
+          height: 630,
+        },
+      ],
+      type: "article",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: blog.title,
+      description: blog.description,
+      images: ["https://aibeyond-tech.vercel.app/logo.png"],
+    },
   };
 }
+
 
 
 export default function BlogPage({ params }: Props) {

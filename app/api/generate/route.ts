@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 
-// ✅ HTML Builder (Premium UI + Image + SEO)
+// ✅ HTML BUILDER
 function buildHTML(data: any, imageUrl: string, readTime: number) {
   return `
 <!DOCTYPE html>
@@ -21,7 +21,7 @@ function buildHTML(data: any, imageUrl: string, readTime: number) {
 
   .hero {
     position: relative;
-    height: 400px;
+    height: 420px;
     overflow: hidden;
   }
 
@@ -31,60 +31,29 @@ function buildHTML(data: any, imageUrl: string, readTime: number) {
     object-fit: cover;
   }
 
-  .overlay {
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(0,0,0,0.75),
+      rgba(0,0,0,0.3),
+      rgba(0,0,0,0.1)
+    );
+  }
+
+  .hero-content {
     position: absolute;
     bottom: 30px;
     left: 40px;
+    right: 40px;
     color: white;
-    text-shadow: 0 3px 10px rgba(0,0,0,0.7);
   }
-    
-/* ✅ DARK OVERLAY */
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(0,0,0,0.75),
-    rgba(0,0,0,0.3),
-    rgba(0,0,0,0.1)
-  );
-}
 
-
-/* ✅ TEXT CONTENT */
-.hero-content {
-  position: absolute;
-  bottom: 30px;
-  left: 40px;
-  right: 40px;
-  color: white;
-}
-
-.hero-content h1 {
-  font-size: 40px;
-  line-height: 1.2;
-  margin-bottom: 10px;
-  text-shadow: 0 3px 15px rgba(0,0,0,0.8);
-}
-
-.meta {
-  font-size: 14px;
-  opacity: 0.9;
-}
-
-/* ✅ MOBILE */
-@media (max-width: 768px) {
   .hero-content h1 {
-    font-size: 26px;
-  }
-}
-
-
-
-  .overlay h1 {
     font-size: 38px;
     margin: 0;
+    text-shadow: 0 3px 15px rgba(0,0,0,0.8);
   }
 
   .meta {
@@ -121,32 +90,19 @@ function buildHTML(data: any, imageUrl: string, readTime: number) {
     color: white;
     font-size: 13px;
   }
-
-  @media (max-width: 768px) {
-    .overlay h1 {
-      font-size: 26px;
-    }
-    .container {
-      padding: 20px;
-    }
-  }
 </style>
 </head>
 
 <body>
 
 <div class="hero">
-  <img src="${imageUrl}" />
-  
-    <div class="hero-overlay"></div>
+  ${imageUrl}
+  <div class="hero-overlay"></div>
 
-    <div class="hero-content">
-        <h1>${data.title}</h1>
-        <p class="meta">
-        AI & Beyond Tech · ${readTime} min read
-        </p>
+  <div class="hero-content">
+    <h1>${data.title}</h1>
+    <div class="meta">AI & Beyond Tech · ${readTime} min read</div>
   </div>
-
 </div>
 
 <div class="container">
@@ -172,46 +128,28 @@ ${data.tags.map((t: string) => `<span class="tag">${t}</span>`).join("")}
 `;
 }
 
-// ✅ API Route
+// ✅ MAIN API
 export async function POST(req: Request) {
   try {
     const { topic } = await req.json();
-
-    if (!topic) {
-      return Response.json({ error: "Topic required" }, { status: 400 });
-    }
 
     const client = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
 
-    // ✅ Agent-style structured prompt
     const SYSTEM_PROMPT = `
-You are an expert blog writer.
-
-Return ONLY valid JSON (no markdown, no extra text):
+Return ONLY valid JSON:
 
 {
-  "title": "string",
-  "meta_description": "string",
-  "introduction": "string",
-  "sections": [
-    {
-      "heading": "string",
-      "content": "string"
-    }
-  ],
-  "conclusion": "string",
-  "tags": ["AI", "Automation"]
+  "title": "",
+  "meta_description": "",
+  "introduction": "",
+  "sections": [{ "heading": "", "content": "" }],
+  "conclusion": "",
+  "tags": ["AI"]
 }
-
-Rules:
-- Use professional tone
-- Write real content
-- Separate paragraphs using \\n\\n
 `;
 
-    // ✅ 1. Generate blog JSON
     const response = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -221,68 +159,45 @@ Rules:
     });
 
     const raw = response.choices?.[0]?.message?.content;
+    if (!raw) throw new Error("Empty response");
 
-    if (!raw) throw new Error("Empty response from OpenAI");
-
-    // ✅ Clean + Extract JSON safely
-    const cleaned = raw
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
-
+    const cleaned = raw.replace(/```json|```/g, "").trim();
     const match = cleaned.match(/\{[\s\S]*\}/);
-
-    if (!match) throw new Error("Invalid JSON format");
+    if (!match) throw new Error("Invalid JSON");
 
     const blogData = JSON.parse(match[0]);
 
-    // ✅ 2. Generate Image
-    const imageResponse = await client.images.generate({
-      model: "gpt-image-1",
-      prompt: `Minimal abstract technology background related to ${topic}, no text, no words, clean modern gradient, futuristic design`,
-      size: "1536x1024",
-    });
+    // ✅ IMAGE GENERATION
+    let imageUrl = "/logo.png";
 
-   let imageUrl = "";
+    try {
+      const imageResponse = await client.images.generate({
+        model: "gpt-image-1",
+        prompt: `Minimal abstract technology background, no text, futuristic clean design about ${topic}`,
+        size: "1536x1024",
+      });
 
-// ✅ Generate image safely
-try {
-  const imageResponse = await client.images.generate({
-    model: "gpt-image-1",
-    prompt: `Minimal abstract technology background related to ${topic}, no text, no words, clean modern gradient, futuristic design`,
-    size: "1536x1024",
-  });
+      const base64 = imageResponse?.data?.[0]?.b64_json;
 
-  const imageBase64 = imageResponse?.data?.[0]?.b64_json;
+      if (base64) {
+        imageUrl = `<img src="data:image/png;base64,${base64}" />`;
+      }
+    } catch (e) {
+      console.warn("Image fallback used");
+    }
 
-  if (imageBase64) {
-    imageUrl = `data:image/png;base64,${imageBase64}`;
-  } else {
-    console.warn("⚠️ Image generation returned empty");
-    imageUrl = "/logo.png"; // ✅ fallback image
-  }
-
-} catch (err) {
-  console.warn("⚠️ Image generation failed:", err);
-  imageUrl = "/logo.png"; // ✅ fallback
-}
-
-    // ✅ 3. Calculate reading time
     const words = JSON.stringify(blogData).split(" ").length;
     const readTime = Math.ceil(words / 200);
 
-    // ✅ 4. Build premium HTML
     const html = buildHTML(blogData, imageUrl, readTime);
 
-    return Response.json({ html });
+    return Response.json({
+      html,
+      blogData,
+      imageUrl
+    });
 
-  } catch (error: any) {
-    console.error("❌ Generate API Error:", error);
-
-    return Response.json(
-      { error: error.message || "Failed to generate blog" },
-      { status: 500 }
-    );
+  } catch (err: any) {
+    return Response.json({ error: err.message }, { status: 500 });
   }
 }
-``
