@@ -1,5 +1,5 @@
 export async function POST(req: Request) {
-  const { topic, html, blogData } = await req.json();
+  const { topic, html, blogData, imageUrl } = await req.json();
 
   const slug = topic.toLowerCase().replace(/\s+/g, "-");
 
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     title: blogData.title,
     slug,
     description: blogData.meta_description,
-    image: "/logo.png", // ⚠ replace later with real URL
+    image: imageUrl, // ⚠ replace later with real URL
     tags: blogData.tags,
     date: new Date().toISOString(),
   };

@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: any) {
       siteName: "AI & Beyond Tech",
       images: [
         {
-          url: "https://aibeyond-tech.vercel.app/logo.png",
+          url: blog.image,
           width: 1200,
           height: 630,
         },

@@ -180,7 +180,11 @@ Return ONLY valid JSON:
       const base64 = imageResponse?.data?.[0]?.b64_json;
 
       if (base64) {
-        imageUrl = `<img src="data:image/png;base64,${base64}" />`;
+        
+        const filename = topic.toLowerCase().replace(/\s+/g, "-");
+
+        imageUrl = await uploadImageToGitHub(base64, filename);
+
       }
     } catch (e) {
       console.warn("Image fallback used");
@@ -201,3 +205,27 @@ Return ONLY valid JSON:
     return Response.json({ error: err.message }, { status: 500 });
   }
 }
+
+async function uploadImageToGitHub(base64: string, filename: string) {
+  const repo = process.env.GITHUB_REPO!;
+  const token = process.env.GITHUB_TOKEN!;
+
+  const path = `public/blog-images/${filename}.png`;
+
+  await fetch(
+    `https://api.github.com/repos/${repo}/contents/${path}`,
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        message: `Upload image ${filename}`,
+        content: base64,
+      }),
+    }
+  );
+
+  return `https://raw.githubusercontent.com/${repo}/main/${path}`;
+}
+
