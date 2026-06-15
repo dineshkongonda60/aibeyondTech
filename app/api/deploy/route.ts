@@ -1,5 +1,5 @@
 export async function POST(req: Request) {
-  const { topic, html, blogData, imageUrl } = await req.json();
+  const { topic, html, blogData } = await req.json();
 
   const slug = topic.toLowerCase().replace(/\s+/g, "-");
 

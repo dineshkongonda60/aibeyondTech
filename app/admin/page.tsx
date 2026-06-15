@@ -47,8 +47,7 @@ const deploy = async () => {
     body: JSON.stringify({
       topic,
       html,
-      blogData,
-      imageUrl
+      blogData
     }),
   });
 
