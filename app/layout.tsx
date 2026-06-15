@@ -10,6 +10,10 @@ export const metadata = {
     icon: "/favicon.ico"
   },
   description: "Exploring AI, Automation & The Future of Technology",
+
+  verification:{
+    google:"h6qVN3cKv3HoHLYPDEsh117-A_u5-4V5YpcH0lLEQJY",
+  }
 };
 
 export default function RootLayout({
