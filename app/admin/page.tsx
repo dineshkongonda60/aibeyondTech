@@ -7,13 +7,29 @@ export default function Admin() {
   const [html, setHtml] = useState("");
 
   const generate = async () => {
+  try {
     const res = await fetch("/api/generate", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",  // ✅ REQUIRED
+      },
       body: JSON.stringify({ topic }),
     });
+
     const data = await res.json();
+
+    if (data.error) {
+      alert(data.error);
+      return;
+    }
+
     setHtml(data.html);
-  };
+  } catch (err) {
+    console.error(err);
+    alert("Failed to generate blog");
+  }
+};
+
 
   const deploy = async () => {
     await fetch("/api/deploy", {
