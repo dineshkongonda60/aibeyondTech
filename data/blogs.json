@@ -21,9 +21,13 @@
   {
     "title": "The Impact of AI in Logistics",
     "slug": "ai-in-logistics",
-    "description": "Explore how AI technology is revolutionizing logistics and supply chain management by enhancing efficiency, reducing costs, and improving delivery accuracy.",
+    "description": "Explore how AI technologies are transforming the logistics industry, enhancing efficiency, and optimizing supply chain operations.",
+    "image": "https://raw.githubusercontent.com/dineshkongonda60/aibeyondTech/main/public/blog-images/ai-in-logistics.png",
     "tags": [
-      "AI"
+      "AI",
+      "Logistics",
+      "Supply Chain",
+      "Automation"
     ],
     "date": "2026-06-15T10:34:06.069Z"
   },
