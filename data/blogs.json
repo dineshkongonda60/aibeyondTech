@@ -32,15 +32,12 @@
     "date": "2026-06-15T10:34:06.069Z"
   },
   {
-    "title": "AI in Education: Transforming Learning for the Future",
+    "title": "AI in Education: Transforming Learning Experiences",
     "slug": "ai-in-education",
-    "description": "Explore how AI is revolutionizing education by enhancing personalized learning, automating administrative tasks, and improving student outcomes.",
+    "description": "Explore how AI is revolutionizing education through personalized learning, automated grading, and enhanced engagement.",
+    "image": "https://raw.githubusercontent.com/dineshkongonda60/aibeyondTech/main/public/blog-images/ai-in-education.png",
     "tags": [
-      "AI",
-      "Education",
-      "Technology",
-      "Personalized Learning",
-      "Innovation"
+      "AI"
     ],
     "date": "2026-06-15T10:30:31.024Z"
   },
