@@ -62,9 +62,10 @@
     "date": "2026-06-15T10:25:54.835Z"
   },
   {
-    "title": "AI in Marketing: Transforming Strategies and Enhancing Customer Experiences",
+    "title": "The Impact of AI in Marketing",
     "slug": "ai-in-marketing",
-    "description": "Explore how artificial intelligence is revolutionizing marketing strategies, improving customer engagement, and driving business growth.",
+    "description": "Explore how artificial intelligence is transforming the marketing landscape by enhancing customer engagement, improving analytics, and personalizing experiences.",
+    "image": "https://raw.githubusercontent.com/dineshkongonda60/aibeyondTech/main/public/blog-images/ai-in-marketing.png",
     "tags": [
       "AI"
     ],
