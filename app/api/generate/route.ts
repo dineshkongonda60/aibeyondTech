@@ -203,7 +203,7 @@ try {
   const imageResponse = await client.images.generate({
     model: "gpt-image-1",
     prompt: `Futuristic minimal AI blog cover image about ${topic}`,
-    size: "1792x1024",
+    size: "1536x1024",
   });
 
   const imageBase64 = imageResponse?.data?.[0]?.b64_json;
