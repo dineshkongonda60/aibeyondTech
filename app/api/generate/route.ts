@@ -96,7 +96,7 @@ function buildHTML(data: any, imageUrl: string, readTime: number) {
 <body>
 
 <div class="hero">
-  ${imageUrl}
+  <img src="${imageUrl}" alt="Blog Image" loading="lazy" />
   <div class="hero-overlay"></div>
 
   <div class="hero-content">
