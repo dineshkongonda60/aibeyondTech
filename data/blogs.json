@@ -52,9 +52,10 @@
     "date": "2026-06-15T10:28:07.539Z"
   },
   {
-    "title": "AI in Healthcare: Transforming Patient Care and Outcomes",
+    "title": "AI in Healthcare: Transforming the Future of Medicine",
     "slug": "ai-in-healthcare",
-    "description": "Explore how AI is revolutionizing healthcare through improved diagnostics, personalized treatment, and operational efficiency.",
+    "description": "Explore the impact of artificial intelligence in healthcare, its applications, benefits, and challenges as it revolutionizes patient care and medical research.",
+    "image": "https://raw.githubusercontent.com/dineshkongonda60/aibeyondTech/main/public/blog-images/ai-in-healthcare.png",
     "tags": [
       "AI"
     ],
