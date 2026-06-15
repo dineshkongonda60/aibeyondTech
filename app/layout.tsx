@@ -1,5 +1,5 @@
 import "./globals.css";
-
+import Script from "next/script";
 
 export const metadata = {
   title: {
@@ -23,6 +23,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      
+  <head>
+        {/* ✅ ADSENSE SCRIPT */}
+        <script 
+        async 
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9814863623957523" 
+        crossorigin="anonymous"></script>
+      </head>
+
       <body>
         <div className="layout">
           <main className="main-content">{children}</main>
