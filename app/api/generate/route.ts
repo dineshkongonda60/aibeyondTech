@@ -223,7 +223,24 @@ Return ONLY valid JSON:
        ✅ IMAGE (FREE)
     ============================ */
 
-    const imageUrl = `https://picsum.photos/seed/${encodeURIComponent(topic)}/800/400`;
+    let imageUrl;
+
+try {
+  const res = await fetch(
+    `https://api.pexels.com/v1/search?query=${topic}&per_page=1`,
+    {
+      headers: {
+        Authorization: process.env.PEXELS_API_KEY!,
+      },
+    }
+  );
+
+  const data = await res.json();
+  imageUrl = data.photos[0]?.src?.landscape;
+
+} catch {
+  imageUrl = `https://picsum.photos/seed/${encodeURIComponent(topic)}/800/400`;
+}
 
     /* ===========================
        ✅ READ TIME
