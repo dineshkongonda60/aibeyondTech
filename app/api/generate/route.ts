@@ -186,29 +186,35 @@ Return ONLY valid JSON:
     const blogData = JSON.parse(match[0]);
 
     // ✅ IMAGE GENERATION
-    let imageUrl = "/logo.png";
+    //let imageUrl = "/logo.png";
 
-    try {
-      const imageResponse = await client.images.generate({
-        model: "gpt-image-1",
-        prompt: `Minimal abstract technology background, no text, futuristic clean design about ${topic}`,
-        size: "1536x1024",
-      });
+    //try {
+    //  const imageResponse = await client.images.generate({
+    //    model: "gpt-image-1",
+    //    prompt: `Minimal abstract technology background, no text, futuristic clean design about ${topic}`,
+    //    size: "1536x1024",
+     // });
+    //const base64 = imageResponse?.data?.[0]?.b64_json;
 
-      const base64 = imageResponse?.data?.[0]?.b64_json;
-
-      if (base64) {
+      //if (base64) {
         
-        const filename = topic.toLowerCase().replace(/\s+/g, "-");
+        //const filename = topic.toLowerCase().replace(/\s+/g, "-");
 
-        imageUrl = await uploadImageToGitHub(base64, filename);
+        //imageUrl = await uploadImageToGitHub(base64, filename);
 
-      }
-    } catch (e) {
-      console.warn("Image fallback used");
-    }
+      //}
+    //} catch (e) {
+      //console.warn("Image fallback used");
+    //}
+    const imageUrl = `https://source.unsplash.com/featured/?${encodeURIComponent(topic)}`;
 
-    const words = JSON.stringify(blogData).split(" ").length;
+    
+const words = (
+  blogData.introduction +
+  blogData.sections.map((s: any) => s.content).join(" ") +
+  blogData.conclusion
+).split(" ").length;
+
     const readTime = Math.ceil(words / 200);
 
     const html = buildHTML(blogData, imageUrl, readTime);
