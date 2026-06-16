@@ -178,7 +178,7 @@ useEffect(() => {
                     }}
                   />
 
-                  <Link href={`/blog/${b.slug}`}>
+                  <Link href={`/blog/${b.slug}.html`}>
                     <button>Read More →</button>
                   </Link>
 
