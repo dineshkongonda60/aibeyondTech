@@ -223,7 +223,7 @@ Return ONLY valid JSON:
        ✅ IMAGE (FREE)
     ============================ */
 
-    const imageUrl = `https://source.unsplash.com/featured/?${encodeURIComponent(topic)}`;
+    const imageUrl = `https://picsum.photos/seed/${encodeURIComponent(topic)}/800/400`;
 
     /* ===========================
        ✅ READ TIME
