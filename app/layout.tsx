@@ -1,5 +1,6 @@
 import "./globals.css";
 import Script from "next/script";
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata = {
   title: {
@@ -44,6 +45,7 @@ export default function RootLayout({
             © AI & Beyond Tech
           </footer>
         </div>
+        <Analytics />
       </body>
     </html>
   );
