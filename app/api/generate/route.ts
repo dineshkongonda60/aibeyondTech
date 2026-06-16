@@ -3,7 +3,7 @@ import OpenAI from "openai";
 /* ===========================
    ✅ HTML BUILDER
 =========================== */
-function buildHTML(data: any, imageUrl: string, readTime: number) {
+function buildHTML(data: any, imageUrl: string, readTime: number, imageCredit: any) {
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -106,6 +106,14 @@ function buildHTML(data: any, imageUrl: string, readTime: number) {
   <div class="hero-content">
     <h1>${data.title}</h1>
     <div class="meta">AI & Beyond Tech · ${readTime} min read</div>
+    
+    <div style="text-align:right; font-size:12px; color:#666; margin-top:5px;">
+      © Photo by 
+      <a href="${imageCredit?.url}" target="_blank">
+        ${imageCredit?.name}
+      </a> on Pexels
+    </div>
+
   </div>
 </div>
 
@@ -168,6 +176,10 @@ Rules:
 - Add real-world examples
 - Use simple language
 - SEO optimized
+- Generate 3–5 relevant tags based on the topic
+- Tags should be short (1–2 words max)
+- Tags should represent categories like AI, Banking, Automation, etc.
+- Always include "AI" as one of the tags if relevant
 - STRICT JSON OUTPUT only
 - No raw newlines or invalid characters inside JSON
 
@@ -179,7 +191,7 @@ Return ONLY valid JSON:
   "introduction": "",
   "sections": [{ "heading": "", "content": "" }],
   "conclusion": "",
-  "tags": ["AI"]
+  "tags": []
 }
 `;
 
@@ -224,6 +236,9 @@ Return ONLY valid JSON:
     ============================ */
 
     let imageUrl;
+    let author;
+    let authorUrl;
+    let imageCredit = null;
 
 try {
   const res = await fetch(
@@ -237,6 +252,8 @@ try {
 
   const data = await res.json();
   imageUrl = data.photos[0]?.src?.landscape;
+  author = data.photos[0]?.photographer;
+  authorUrl = data.photos[0]?.photographer_url;
 
 } catch {
   imageUrl = `https://picsum.photos/seed/${encodeURIComponent(topic)}/800/400`;
@@ -254,12 +271,16 @@ try {
 
     const readTime = Math.ceil(words / 200);
 
-    const html = buildHTML(blogData, imageUrl, readTime);
+    const html = buildHTML(blogData, imageUrl, readTime, imageCredit);
 
     return Response.json({
       html,
       blogData,
       imageUrl,
+      imageCredit:{
+        name: author,
+        url: authorUrl
+      }
     });
 
   } catch (err: any) {
