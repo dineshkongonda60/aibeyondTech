@@ -2,7 +2,14 @@ export async function POST(req: Request) {
   try {
     const { topic, html, blogData, imageUrl } = await req.json();
 
-    const slug = topic.toLowerCase().replace(/\s+/g, "-");
+    
+    const slug = topic
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, "")   // ✅ remove special chars
+      .replace(/\s+/g, "-")       // ✅ spaces → dash
+      .replace(/-+/g, "-")        // ✅ remove duplicate dashes
+      .trim();
+
 
     const repo = process.env.GITHUB_REPO!;
     const token = process.env.GITHUB_TOKEN!;
