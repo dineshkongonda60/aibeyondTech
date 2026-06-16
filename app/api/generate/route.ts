@@ -1,11 +1,14 @@
 import OpenAI from "openai";
 
-// ✅ HTML BUILDER
+/* ===========================
+   ✅ HTML BUILDER
+=========================== */
 function buildHTML(data: any, imageUrl: string, readTime: number) {
   return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
@@ -91,6 +94,7 @@ function buildHTML(data: any, imageUrl: string, readTime: number) {
     font-size: 13px;
   }
 </style>
+
 </head>
 
 <body>
@@ -112,23 +116,20 @@ function buildHTML(data: any, imageUrl: string, readTime: number) {
 ${data.sections.map((s: any, index: number) => `
   <h2>${s.heading}</h2>
   <p>${s.content.replace(/\n\n/g, "</p><p>")}</p>
-    
-${index === 1 ? `
+
+  ${index === 1 ? `
     <div style="margin:30px 0;">
-      <!-- Ad -->
-      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9814863623957523"
-     crossorigin="anonymous"></script>
-        <!-- Blog-Ad-Unit -->
-        <ins class="adsbygoogle"
-            style="display:block"
-            data-ad-client="ca-pub-9814863623957523"
-            data-ad-slot="2586673450"
-            data-ad-format="auto"
-            data-full-width-responsive="true"></ins>
-        <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-            </div>
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-9814863623957523"
+           data-ad-slot="2586673450"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
   ` : ""}
 `).join("")}
 
@@ -146,7 +147,9 @@ ${data.tags.map((t: string) => `<span class="tag">${t}</span>`).join("")}
 `;
 }
 
-// ✅ MAIN API
+/* ===========================
+   ✅ MAIN API
+=========================== */
 export async function POST(req: Request) {
   try {
     const { topic } = await req.json();
@@ -161,10 +164,12 @@ Generate a detailed, high-quality blog article.
 Rules:
 - Minimum 1200–1500 words
 - Include 5–6 sections
-- Each section must have detailed explanation (at least 150–200 words)
-- Add real-world examples where possible
-- Use clear and simple language
-- Make it SEO-friendly
+- Each section must have detailed explanation (150–200 words)
+- Add real-world examples
+- Use simple language
+- SEO optimized
+- STRICT JSON OUTPUT only
+- No raw newlines or invalid characters inside JSON
 
 Return ONLY valid JSON:
 
@@ -189,41 +194,46 @@ Return ONLY valid JSON:
     const raw = response.choices?.[0]?.message?.content;
     if (!raw) throw new Error("Empty response");
 
-    const cleaned = raw.replace(/```json|```/g, "").trim();
+    /* ===========================
+       ✅ SAFE JSON CLEANING
+    ============================ */
+
+    let cleaned = raw.replace(/```json|```/g, "").trim();
+
+    cleaned = cleaned.replace(/[\u0000-\u001F]+/g, " ");
+
     const match = cleaned.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error("Invalid JSON");
+    if (!match) throw new Error("Invalid JSON structure");
 
-    const blogData = JSON.parse(match[0]);
+    const safeJson = match[0]
+      .replace(/\n/g, " ")
+      .replace(/\r/g, " ")
+      .replace(/\t/g, " ");
 
-    // ✅ IMAGE GENERATION
-    //let imageUrl = "/logo.png";
+    let blogData;
 
-    //try {
-    //  const imageResponse = await client.images.generate({
-    //    model: "gpt-image-1",
-    //    prompt: `Minimal abstract technology background, no text, futuristic clean design about ${topic}`,
-    //    size: "1536x1024",
-     // });
-    //const base64 = imageResponse?.data?.[0]?.b64_json;
+    try {
+      blogData = JSON.parse(safeJson);
+    } catch (e) {
+      console.error("JSON parse failed:", safeJson);
+      throw new Error("Invalid JSON from AI");
+    }
 
-      //if (base64) {
-        
-        //const filename = topic.toLowerCase().replace(/\s+/g, "-");
+    /* ===========================
+       ✅ IMAGE (FREE)
+    ============================ */
 
-        //imageUrl = await uploadImageToGitHub(base64, filename);
-
-      //}
-    //} catch (e) {
-      //console.warn("Image fallback used");
-    //}
     const imageUrl = `https://source.unsplash.com/featured/?${encodeURIComponent(topic)}`;
 
-    
-const words = (
-  blogData.introduction +
-  blogData.sections.map((s: any) => s.content).join(" ") +
-  blogData.conclusion
-).split(" ").length;
+    /* ===========================
+       ✅ READ TIME
+    ============================ */
+
+    const words = (
+      blogData.introduction +
+      blogData.sections.map((s: any) => s.content).join(" ") +
+      blogData.conclusion
+    ).split(" ").length;
 
     const readTime = Math.ceil(words / 200);
 
@@ -232,34 +242,15 @@ const words = (
     return Response.json({
       html,
       blogData,
-      imageUrl
+      imageUrl,
     });
 
   } catch (err: any) {
-    return Response.json({ error: err.message }, { status: 500 });
+    console.error("API Error:", err);
+
+    return Response.json(
+      { error: err.message },
+      { status: 500 }
+    );
   }
 }
-
-async function uploadImageToGitHub(base64: string, filename: string) {
-  const repo = process.env.GITHUB_REPO!;
-  const token = process.env.GITHUB_TOKEN!;
-
-  const path = `public/blog-images/${filename}.png`;
-
-  await fetch(
-    `https://api.github.com/repos/${repo}/contents/${path}`,
-    {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        message: `Upload image ${filename}`,
-        content: base64,
-      }),
-    }
-  );
-
-  return `https://raw.githubusercontent.com/${repo}/main/${path}`;
-}
-
