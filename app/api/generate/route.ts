@@ -156,6 +156,16 @@ export async function POST(req: Request) {
     });
 
     const SYSTEM_PROMPT = `
+Generate a detailed, high-quality blog article.
+
+Rules:
+- Minimum 1200–1500 words
+- Include 5–6 sections
+- Each section must have detailed explanation (at least 150–200 words)
+- Add real-world examples where possible
+- Use clear and simple language
+- Make it SEO-friendly
+
 Return ONLY valid JSON:
 
 {
