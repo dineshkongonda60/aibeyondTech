@@ -127,6 +127,29 @@ export async function POST(req: Request) {
 
     return Response.json({ success: true });
 
+
+    /* =========================
+   ✅ 6. TRIGGER MAKE WEBHOOK
+========================= */
+
+try {
+  await fetch("https://hook.eu2.make.com/jcxh3y4qqnq27k1g1ja8j8wokbu161dx", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      title: blogData.title,
+      description: blogData.meta_description,
+      url: `https://aibeyond-tech.vercel.app/blogs/${slug}`,
+      tags: blogData.tags,
+      image: imageUrl,
+    }),
+  });
+} catch (err) {
+  console.warn("Webhook trigger failed");
+}
+
   } catch (error: any) {
     console.error("❌ Deploy Error:", error);
 
