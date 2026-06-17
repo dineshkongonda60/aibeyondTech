@@ -147,7 +147,7 @@ export async function POST(req: Request) {
       return false;
     }
 
-    const blogUrl = `https://aibeyond-tech.vercel.app/blogs/${slug}`;
+    const blogUrl = `https://aibeyond-tech.vercel.app/blog/${slug}`;
 
     console.log("Waiting for deployment...");
     await waitForPage(blogUrl);
