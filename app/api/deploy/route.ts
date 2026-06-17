@@ -2,6 +2,10 @@ export async function POST(req: Request) {
   try {
     const { topic, html, blogData, imageUrl } = await req.json();
 
+    /* =========================
+       ✅ 1. SLUG GENERATION
+    ========================== */
+
     const slug = topic
       .toLowerCase()
       .replace(/[^\w\s-]/g, "")
@@ -14,7 +18,7 @@ export async function POST(req: Request) {
     const token = process.env.GITHUB_TOKEN!;
 
     /* =========================
-       ✅ 1. LOAD blogs.json
+       ✅ 2. LOAD blogs.json
     ========================== */
 
     const res = await fetch(
@@ -33,7 +37,7 @@ export async function POST(req: Request) {
     );
 
     /* =========================
-       ✅ 2. UPSERT BLOG META
+       ✅ 3. UPSERT BLOG META
     ========================== */
 
     const existingIndex = existing.findIndex(
@@ -61,10 +65,10 @@ export async function POST(req: Request) {
     const updated = existing;
 
     /* =========================
-       ✅ 3. HANDLE HTML FILE (FIX)
+       ✅ 4. HANDLE HTML FILE
     ========================== */
 
-    const filePath = `blogs/${slug}.html`;
+    const filePath = `blogs/${slug}`;
 
     let existingHtmlFile = null;
 
@@ -86,7 +90,7 @@ export async function POST(req: Request) {
     }
 
     /* =========================
-       ✅ 4. CREATE / UPDATE HTML
+       ✅ 5. UPLOAD / UPDATE HTML
     ========================== */
 
     await fetch(
@@ -99,13 +103,13 @@ export async function POST(req: Request) {
         body: JSON.stringify({
           message: `Add/Update blog ${topic}`,
           content: Buffer.from(html).toString("base64"),
-          sha: existingHtmlFile?.sha, // ✅ CRITICAL FIX
+          sha: existingHtmlFile?.sha,
         }),
       }
     );
 
     /* =========================
-       ✅ 5. UPDATE blogs.json
+       ✅ 6. UPDATE blogs.json
     ========================== */
 
     await fetch(
@@ -125,47 +129,65 @@ export async function POST(req: Request) {
       }
     );
 
-    return Response.json({ success: true });
+    /* =========================
+       ✅ 7. WAIT FOR VERCEL DEPLOY
+    ========================== */
 
+    async function waitForPage(url: string, retries = 6) {
+      for (let i = 0; i < retries; i++) {
+        try {
+          const res = await fetch(url);
 
-async function waitForPage(url: string, retries = 5) {
-  for (let i = 0; i < retries; i++) {
-    const res = await fetch(url);
+          if (res.ok) return true;
+        } catch {}
 
-    if (res.ok) return true;
+        await new Promise((r) => setTimeout(r, 15000));
+      }
 
-    await new Promise((r) => setTimeout(r, 15000)); // 15 sec
-  }
+      return false;
+    }
 
-  return false;
-}
-console.log("Page is live");
+    const blogUrl = `https://aibeyond-tech.vercel.app/blogs/${slug}`;
 
-await waitForPage(`https://aibeyond-tech.vercel.app/blogs/${slug}`);
+    console.log("Waiting for deployment...");
+    await waitForPage(blogUrl);
+    console.log("Page is live ✅");
 
     /* =========================
-   ✅ 6. TRIGGER MAKE WEBHOOK
-========================= */
-console.log("Triggering Make webhook...");
+       ✅ 8. TRIGGER MAKE WEBHOOK
+    ========================== */
 
-try {
-  await fetch("https://hook.eu2.make.com/jcxh3y4qqnq27k1g1ja8j8wokbu161dx", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      title: blogData.title,
-      description: blogData.meta_description,
-      url: `https://aibeyond-tech.vercel.app/blogs/${slug}`,
-      tags: blogData.tags,
-      image: imageUrl,
-    }),
-  });
-} catch (err) {
-  console.warn("Webhook trigger failed");
-}
-console.warn("Webhook triggerd");
+    console.log("Triggering Make webhook...");
+
+    try {
+      const webhookRes = await fetch(
+        "https://hook.eu2.make.com/jcxh3y4qqnq27k1g1ja8j8wokbu161dx",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: blogData.title,
+            description: blogData.meta_description,
+            url: blogUrl,
+            tags: blogData.tags,
+            image: imageUrl,
+          }),
+        }
+      );
+
+      console.log("Webhook status:", webhookRes.status);
+    } catch (err) {
+      console.error("Webhook trigger failed:", err);
+    }
+
+    /* =========================
+       ✅ FINAL RESPONSE
+    ========================== */
+
+    return Response.json({ success: true });
+
   } catch (error: any) {
     console.error("❌ Deploy Error:", error);
 
