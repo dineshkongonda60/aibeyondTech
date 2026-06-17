@@ -128,6 +128,21 @@ export async function POST(req: Request) {
     return Response.json({ success: true });
 
 
+async function waitForPage(url: string, retries = 5) {
+  for (let i = 0; i < retries; i++) {
+    const res = await fetch(url);
+
+    if (res.ok) return true;
+
+    await new Promise((r) => setTimeout(r, 15000)); // 15 sec
+  }
+
+  return false;
+}
+console.log("Page is live");
+
+await waitForPage(`https://aibeyond-tech.vercel.app/blogs/${slug}`);
+
     /* =========================
    ✅ 6. TRIGGER MAKE WEBHOOK
 ========================= */
