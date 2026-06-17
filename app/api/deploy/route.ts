@@ -131,6 +131,7 @@ export async function POST(req: Request) {
     /* =========================
    ✅ 6. TRIGGER MAKE WEBHOOK
 ========================= */
+console.log("Triggering Make webhook...");
 
 try {
   await fetch("https://hook.eu2.make.com/jcxh3y4qqnq27k1g1ja8j8wokbu161dx", {
@@ -149,7 +150,7 @@ try {
 } catch (err) {
   console.warn("Webhook trigger failed");
 }
-
+console.warn("Webhook triggerd");
   } catch (error: any) {
     console.error("❌ Deploy Error:", error);
 
