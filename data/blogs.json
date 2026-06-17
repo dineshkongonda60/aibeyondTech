@@ -1,5 +1,19 @@
 [
   {
+    "title": "How Computer Vision Trains Machines to 'See' the World",
+    "slug": "how-computer-vision-trains-machines-to-see-the-world",
+    "description": "Explore the fascinating world of computer vision, its applications, training methods, and real-world examples that showcase how machines learn to interpret visual data.",
+    "image": "https://images.pexels.com/photos/14331257/pexels-photo-14331257.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+    "tags": [
+      "AI",
+      "Computer Vision",
+      "Automation",
+      "Machine Learning",
+      "Healthcare"
+    ],
+    "date": "2026-06-17T06:06:33.784Z"
+  },
+  {
     "title": "The Rise of Multi-Agent Systems: Transforming Industries with Intelligent Collaboration",
     "slug": "the-rise-of-multi-agent-systems",
     "description": "Explore the evolution, applications, and future of multi-agent systems in various sectors. Discover how intelligent agents collaborate to enhance efficiency and innovation.",
