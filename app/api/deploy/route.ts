@@ -68,7 +68,7 @@ export async function POST(req: Request) {
        ✅ 4. HANDLE HTML FILE
     ========================== */
 
-    const filePath = `blogs/${slug}`;
+    const filePath = `blogs/${slug}.html`;
 
     let existingHtmlFile = null;
 
@@ -147,7 +147,7 @@ export async function POST(req: Request) {
       return false;
     }
 
-    const blogUrl = `https://aibeyond-tech.vercel.app/blog/${slug}`;
+    const blogUrl = `https://aibeyond-tech.vercel.app/blog/${slug}.html`;
 
     console.log("Waiting for deployment...");
     await waitForPage(blogUrl);
