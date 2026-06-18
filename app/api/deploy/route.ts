@@ -152,7 +152,7 @@ export async function POST(req: Request) {
     console.log("Waiting for deployment...");
     await waitForPage(blogUrl);
     console.log("Page is live ✅");
-    blogUrl = `https://aibeyond-tech.vercel.app/blog/${slug}`;
+    const newblogUrl = `https://aibeyond-tech.vercel.app/blog/${slug}`;
     /* =========================
        ✅ 8. TRIGGER MAKE WEBHOOK
     ========================== */
@@ -170,7 +170,7 @@ export async function POST(req: Request) {
           body: JSON.stringify({
             title: blogData.title,
             description: blogData.meta_description,
-            url: blogUrl,
+            url: newblogUrl,
             tags: blogData.tags,
             image: imageUrl,
           }),
