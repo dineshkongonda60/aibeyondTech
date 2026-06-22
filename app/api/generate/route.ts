@@ -3,7 +3,13 @@ import OpenAI from "openai";
 /* ===========================
    ✅ HTML BUILDER
 =========================== */
-function buildHTML(data: any, imageUrl: string, readTime: number, imageCredit: any) {
+function buildHTML(
+  data: any,
+  slug: string,
+  imageUrl: string,
+  readTime: number,
+  imageCredit: any
+) {
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -14,6 +20,15 @@ function buildHTML(data: any, imageUrl: string, readTime: number, imageCredit: a
 
 <title>${data.title}</title>
 <meta name="description" content="${data.meta_description}" />
+
+<!-- ✅ Canonical FIX -->
+https://aibeyond-tech.vercel.app/blog/${slug}
+
+<!-- ✅ AdSense script (load once) -->
+<script async
+  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9814863623957523"
+  crossorigin="anonymous">
+</script>
 
 <style>
   body {
@@ -56,7 +71,6 @@ function buildHTML(data: any, imageUrl: string, readTime: number, imageCredit: a
   .hero-content h1 {
     font-size: 38px;
     margin: 0;
-    text-shadow: 0 3px 15px rgba(0,0,0,0.8);
   }
 
   .meta {
@@ -100,20 +114,22 @@ function buildHTML(data: any, imageUrl: string, readTime: number, imageCredit: a
 <body>
 
 <div class="hero">
-  <img src="${imageUrl}" alt="Blog Image" loading="lazy" />
+  <img src="${imageUrl}" alt="${data.title}" loading="lazy" />
   <div class="hero-overlay"></div>
 
   <div class="hero-content">
     <h1>${data.title}</h1>
     <div class="meta">AI & Beyond Tech · ${readTime} min read</div>
-    
-    <div style="text-align:right; font-size:12px; color:#666; margin-top:5px;">
-      © Photo by 
-      <a href="${imageCredit?.url}" target="_blank">
-        ${imageCredit?.name}
-      </a> on Pexels
-    </div>
 
+    ${
+      imageCredit?.name
+        ? `
+    <div style="text-align:right; font-size:12px; color:#ddd; margin-top:5px;">
+      © Photo by 
+      <a href="${imageCredit.url}" target="_blank">${imageCredit.name}</a>
+    </div>`
+        : ""
+    }
   </div>
 </div>
 
@@ -121,11 +137,16 @@ function buildHTML(data: any, imageUrl: string, readTime: number, imageCredit: a
 
 <p>${data.introduction.replace(/\n\n/g, "</p><p>")}</p>
 
-${data.sections.map((s: any, index: number) => `
+${data.sections
+  .map(
+    (s: any, index: number) => `
   <h2>${s.heading}</h2>
   <p>${s.content.replace(/\n\n/g, "</p><p>")}</p>
 
-  ${index === 1 ? `
+  ${
+    index === 1
+      ? `
+    <!-- ✅ Ad placement -->
     <div style="margin:30px 0;">
       <ins class="adsbygoogle"
            style="display:block"
@@ -133,22 +154,38 @@ ${data.sections.map((s: any, index: number) => `
            data-ad-slot="2586673450"
            data-ad-format="auto"
            data-full-width-responsive="true"></ins>
-
-      <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
     </div>
-  ` : ""}
-`).join("")}
+  `
+      : ""
+  }
+`
+  )
+  .join("")}
 
 <h2>Conclusion</h2>
 <p>${data.conclusion.replace(/\n\n/g, "</p><p>")}</p>
 
 <div>
-${data.tags.map((t: string) => `<span class="tag">${t}</span>`).join("")}
+${data.tags
+  .map((t: string) => `<span class="tag">${t}</span>`)
+  .join("")}
 </div>
 
 </div>
+
+<!-- ✅ FIXED AdSense INIT -->
+<script>
+window.addEventListener("load", function () {
+  const ads = document.querySelectorAll(".adsbygoogle");
+  ads.forEach(() => {
+    try {
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {
+      console.log("Adsense error:", e);
+    }
+  });
+});
+</script>
 
 </body>
 </html>
@@ -166,6 +203,16 @@ export async function POST(req: Request) {
       apiKey: process.env.OPENAI_API_KEY,
     });
 
+    /* ✅ SLUG FIX */
+    const slug = topic
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/(^-|-$)/g, "")
+      .trim();
+
+    /* ✅ ORIGINAL PROMPT (UNCHANGED) */
     const SYSTEM_PROMPT = `
 Generate a detailed, high-quality blog article.
 
@@ -206,62 +253,32 @@ Return ONLY valid JSON:
     const raw = response.choices?.[0]?.message?.content;
     if (!raw) throw new Error("Empty response");
 
-    /* ===========================
-       ✅ SAFE JSON CLEANING
-    ============================ */
-
     let cleaned = raw.replace(/```json|```/g, "").trim();
-
-    cleaned = cleaned.replace(/[\u0000-\u001F]+/g, " ");
-
     const match = cleaned.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error("Invalid JSON structure");
+    if (!match) throw new Error("Invalid JSON");
 
-    const safeJson = match[0]
-      .replace(/\n/g, " ")
-      .replace(/\r/g, " ")
-      .replace(/\t/g, " ");
+    const blogData = JSON.parse(match[0]);
 
-    let blogData;
+    /* ✅ IMAGE FIX */
+    let imageUrl, author, authorUrl;
 
     try {
-      blogData = JSON.parse(safeJson);
-    } catch (e) {
-      console.error("JSON parse failed:", safeJson);
-      throw new Error("Invalid JSON from AI");
+      const res = await fetch(
+        `https://api.pexels.com/v1/search?query=${topic}&per_page=1`,
+        {
+          headers: {
+            Authorization: process.env.PEXELS_API_KEY!,
+          },
+        }
+      );
+
+      const data = await res.json();
+      imageUrl = data.photos[0]?.src?.landscape;
+      author = data.photos[0]?.photographer;
+      authorUrl = data.photos[0]?.photographer_url;
+    } catch {
+      imageUrl = `https://picsum.photos/seed/${encodeURIComponent(topic)}/800/400`;
     }
-
-    /* ===========================
-       ✅ IMAGE (FREE)
-    ============================ */
-
-    let imageUrl;
-    let author;
-    let authorUrl;
-    let imageCredit = null;
-
-try {
-  const res = await fetch(
-    `https://api.pexels.com/v1/search?query=${topic}&per_page=1`,
-    {
-      headers: {
-        Authorization: process.env.PEXELS_API_KEY!,
-      },
-    }
-  );
-
-  const data = await res.json();
-  imageUrl = data.photos[0]?.src?.landscape;
-  author = data.photos[0]?.photographer;
-  authorUrl = data.photos[0]?.photographer_url;
-
-} catch {
-  imageUrl = `https://picsum.photos/seed/${encodeURIComponent(topic)}/800/400`;
-}
-
-    /* ===========================
-       ✅ READ TIME
-    ============================ */
 
     const words = (
       blogData.introduction +
@@ -271,24 +288,22 @@ try {
 
     const readTime = Math.ceil(words / 200);
 
-    const html = buildHTML(blogData, imageUrl, readTime, imageCredit);
+    const html = buildHTML(
+      blogData,
+      slug,
+      imageUrl,
+      readTime,
+      { name: author, url: authorUrl }
+    );
 
     return Response.json({
       html,
       blogData,
+      slug,
       imageUrl,
-      imageCredit:{
-        name: author,
-        url: authorUrl
-      }
     });
 
   } catch (err: any) {
-    console.error("API Error:", err);
-
-    return Response.json(
-      { error: err.message },
-      { status: 500 }
-    );
+    return Response.json({ error: err.message }, { status: 500 });
   }
 }
