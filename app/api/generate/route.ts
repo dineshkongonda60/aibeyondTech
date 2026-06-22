@@ -22,7 +22,7 @@ function buildHTML(
 <meta name="description" content="${data.meta_description}" />
 
 <!-- ✅ Canonical FIX -->
-https://aibeyond-tech.vercel.app/blog/${slug}
+<link rel="canonical" href="https://aibeyond-tech.vercel.app/blog/${slug}" />
 
 <!-- ✅ AdSense script (load once) -->
 <script async
