@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import blogs from "../data/blogs.json";
+import AdBanner from "@/components/AdBanner";
 
 
 
@@ -91,7 +92,7 @@ useEffect(() => {
         <h1>AI & Beyond Tech</h1>
         <p>Exploring AI, Automation & The Future of Technology</p>
       </div>
-
+      <AdBanner />
       {/* ✅ SEARCH */}
       <div className="search-container">
         <input
@@ -151,7 +152,7 @@ useEffect(() => {
               No results found for "{debouncedSearch}" 🚀
             </p>
           ) : (
-            filtered.map((b: any) => (
+            filtered.map((b: any, index: number) => (
               <div key={b.slug} className="card">
 
                 {/* ✅ Thumbnail */}
@@ -185,8 +186,11 @@ useEffect(() => {
                   </Link>
 
                 </div>
-
+                {/* ✅ Show ad every 4 cards */}
+                {(index + 1) % 4 === 0 && <AdBanner />}
               </div>
+              
+              
             ))
           )}
         </div>
