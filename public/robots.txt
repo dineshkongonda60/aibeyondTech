@@ -1,0 +1,4 @@
+User-Agent: *
+Allow: /
+
+Sitemap: https://aibeyond-tech.vercel.app/sitemap.xml
