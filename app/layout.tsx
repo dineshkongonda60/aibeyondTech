@@ -28,6 +28,9 @@ export const metadata = {
   },
 
   metadataBase: new URL("https://aibeyond-tech.vercel.app"),
+  alternates: {
+    canonical: "/",
+  },
 
   openGraph: {
     title: "AI & Beyond Tech",
