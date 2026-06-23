@@ -183,6 +183,17 @@ export async function POST(req: Request) {
     }
 
     /* =========================
+       ✅ Updating Sitemap on Google
+    ========================== */
+    
+    await fetch(
+      "https://www.google.com/ping?sitemap=https://aibeyond-tech.vercel.app/sitemap.xml"
+    );
+
+    console.log("Google sitemap pinged ✅");
+
+
+    /* =========================
        ✅ FINAL RESPONSE
     ========================== */
 
