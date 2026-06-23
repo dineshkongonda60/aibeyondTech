@@ -1,18 +1,9 @@
-import { MetadataRoute } from "next";
+import blogs from "@/data/blogs.json"
 
 export const dynamic = "force-static";
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+export default function sitemap() {
   const baseUrl = "https://aibeyond-tech.vercel.app";
-
-  let blogs = [];
-
-  try {
-    const res = await fetch(`${baseUrl}/blogs.json`);
-    blogs = await res.json();
-  } catch (e) {
-    console.error("Failed to load blogs", e);
-  }
 
   const blogUrls = blogs.map((blog: any) => ({
     url: `${baseUrl}/blog/${blog.slug}`,
