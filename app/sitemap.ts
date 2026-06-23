@@ -1,9 +1,23 @@
-import blogs from "@/data/blogs.json"
+export const dynamic = "force-dynamic";
 
-export const dynamic = "force-static";
-
-export default function sitemap() {
+export default async function sitemap() {
   const baseUrl = "https://aibeyond-tech.vercel.app";
+
+  let blogs = [];
+  const repo = process.env.GITHUB_REPO!;
+
+  try {
+    const res = await fetch(
+      "https://raw.githubusercontent.com/dineshkongonda60/aibeyondTech/main/data/blogs.json",
+      {
+        cache: "no-store",
+      }
+    );
+
+    blogs = await res.json();
+  } catch (e) {
+    console.error("Failed to fetch blogs", e);
+  }
 
   const blogUrls = blogs.map((blog: any) => ({
     url: `${baseUrl}/blog/${blog.slug}`,
