@@ -192,6 +192,27 @@ export async function POST(req: Request) {
 
     console.log("Google sitemap pinged ✅");
 
+    /* =========================
+       ✅ Updating Sitemap on Bing
+    ========================== */
+    const indexNowKey = "61f44f88d4a447808e81571ce94d90b3"; // your key
+
+    await fetch("https://api.indexnow.org/indexnow", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        host: "aibeyond-tech.vercel.app",
+        key: indexNowKey,
+        urlList: [
+          `https://aibeyond-tech.vercel.app/blog/${slug}`
+        ],
+      }),
+    });
+
+console.log("Bing IndexNow submitted ✅");
+
 
     /* =========================
        ✅ FINAL RESPONSE
