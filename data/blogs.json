@@ -1,5 +1,19 @@
 [
   {
+    "title": "Inside GLM-5.2: How 'IndexShare' Slashes 1M-Context Compute Costs by 3x",
+    "slug": "inside-glm-52-how-indexshare-slashes-1m-context-compute-costs-by-3x",
+    "description": "Explore how GLM-5.2's innovative feature, 'IndexShare', significantly reduces compute costs in AI applications by transforming the way we manage large context data.",
+    "image": "https://images.pexels.com/photos/37730212/pexels-photo-37730212.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+    "tags": [
+      "AI",
+      "IndexShare",
+      "Compute",
+      "Modeling",
+      "Automation"
+    ],
+    "date": "2026-06-29T10:09:00.213Z"
+  },
+  {
     "title": "Real World Examples of AI in the Retail Industry",
     "slug": "real-world-examples-of-ai-in-the-retail-industry",
     "description": "Explore the transformative impact of AI in the retail sector with real-world examples, detailing how companies leverage technology for improved customer experiences and operational efficiency.",
