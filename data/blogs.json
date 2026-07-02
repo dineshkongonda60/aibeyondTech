@@ -1,5 +1,19 @@
 [
   {
+    "title": "Decentralized AI vs Big Tech AI: Who Will Win?",
+    "slug": "decentralized-ai-vs-big-tech-ai-who-will-win",
+    "description": "Explore the ongoing battle between decentralized AI and big tech AI, their advantages, challenges, and real-world implications.",
+    "image": "https://images.pexels.com/photos/8438956/pexels-photo-8438956.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+    "tags": [
+      "AI",
+      "Decentralization",
+      "Big Tech",
+      "Privacy",
+      "Ethics"
+    ],
+    "date": "2026-07-02T05:49:27.748Z"
+  },
+  {
     "title": "Inside GLM-5.2: How 'IndexShare' Slashes 1M-Context Compute Costs by 3x",
     "slug": "inside-glm-52-how-indexshare-slashes-1m-context-compute-costs-by-3x",
     "description": "Explore how GLM-5.2's innovative feature, 'IndexShare', significantly reduces compute costs in AI applications by transforming the way we manage large context data.",
