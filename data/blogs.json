@@ -1,5 +1,19 @@
 [
   {
+    "title": "Robotics and AI: The Rise of Physical Intelligence",
+    "slug": "robotics-ai-the-rise-of-physical-intelligence",
+    "description": "Explore how the integration of robotics and AI is shaping the future with advancements in physical intelligence. Learn about applications, benefits, and real-world examples.",
+    "image": "https://images.pexels.com/photos/8386369/pexels-photo-8386369.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+    "tags": [
+      "AI",
+      "Robotics",
+      "Manufacturing",
+      "Healthcare",
+      "Automation"
+    ],
+    "date": "2026-07-08T10:17:38.995Z"
+  },
+  {
     "title": "Digital Humans & AI Avatars: The Future of Interaction",
     "slug": "digital-humans-ai-avatars-the-future-of-interaction",
     "description": "Explore the transformative role of digital humans and AI avatars in redefining interaction in various sectors, including gaming, customer service, and social media.",
