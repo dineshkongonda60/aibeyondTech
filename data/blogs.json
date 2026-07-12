@@ -1,5 +1,19 @@
 [
   {
+    "title": "Augmented Intelligence: Bridging Humans and Machines",
+    "slug": "augmented-intel",
+    "description": "Explore the concept of Augmented Intelligence, its applications, benefits, and how it differs from Artificial Intelligence. Understand its impact on various industries and the future it promises.",
+    "image": "https://images.pexels.com/photos/14844846/pexels-photo-14844846.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+    "tags": [
+      "AI",
+      "Intelligence",
+      "Healthcare",
+      "Finance",
+      "Education"
+    ],
+    "date": "2026-07-12T13:27:18.049Z"
+  },
+  {
     "title": "Understanding Shadow AI: The Hidden Risks for Your Company",
     "slug": "what-is-shadow-ai-and-why-is-it-your-companys-biggest-risk",
     "description": "Discover what Shadow AI is, its implications for your business, and how to manage the risks associated with unauthorized AI use within organizations.",
