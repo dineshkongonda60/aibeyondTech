@@ -1,5 +1,19 @@
 [
   {
+    "title": "Understanding Hallucination in Large Language Models",
+    "slug": "what-actually-happens-when-an-llm-hallucinates",
+    "description": "Explore the phenomenon of hallucination in large language models, its causes, real-world implications, and ways to mitigate its effects.",
+    "image": "https://images.pexels.com/photos/613508/pexels-photo-613508.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+    "tags": [
+      "AI",
+      "LLM",
+      "Hallucination",
+      "Machine Learning",
+      "Ethics"
+    ],
+    "date": "2026-07-13T15:10:01.393Z"
+  },
+  {
     "title": "Augmented Intelligence: Bridging Humans and Machines",
     "slug": "augmented-intel",
     "description": "Explore the concept of Augmented Intelligence, its applications, benefits, and how it differs from Artificial Intelligence. Understand its impact on various industries and the future it promises.",
