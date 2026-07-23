@@ -1,5 +1,19 @@
 [
   {
+    "title": "Think Like AI: Understanding the Future of Decision-Making",
+    "slug": "think-like-ai",
+    "description": "Explore how adopting an AI mindset can transform decision-making processes in various industries. Learn practical strategies to think like AI and apply them in real-world scenarios.",
+    "image": "https://images.pexels.com/photos/8849295/pexels-photo-8849295.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+    "tags": [
+      "AI",
+      "Decision-making",
+      "Automation",
+      "Data",
+      "Predictive"
+    ],
+    "date": "2026-07-23T13:31:53.701Z"
+  },
+  {
     "title": "Silicon Meets Biology: Why Biocomputing is the Next Massive Tech Leap",
     "slug": "silicon-meets-biology-why-biocomputing-is-the-next-massive-tech-leap",
     "description": "Explore the revolutionary fusion of silicon and biology in biocomputing and its potential to transform technology, medicine, and data processing.",
