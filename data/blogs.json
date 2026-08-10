@@ -1,5 +1,19 @@
 [
   {
+    "title": "TPU vs GPU: Understanding Their Differences and Use Cases",
+    "slug": "tpu-vs-gpu",
+    "description": "Explore the key differences between Tensor Processing Units (TPUs) and Graphics Processing Units (GPUs), their architectures, and real-world applications in AI and deep learning.",
+    "image": "https://images.pexels.com/photos/32728403/pexels-photo-32728403.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+    "tags": [
+      "AI",
+      "TPU",
+      "GPU",
+      "Hardware",
+      "Machine Learning"
+    ],
+    "date": "2026-08-10T12:20:13.163Z"
+  },
+  {
     "title": "Think Like AI: Understanding the Future of Decision-Making",
     "slug": "think-like-ai",
     "description": "Explore how adopting an AI mindset can transform decision-making processes in various industries. Learn practical strategies to think like AI and apply them in real-world scenarios.",
