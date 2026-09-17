@@ -1,7 +1,15 @@
 export async function POST(req: Request) {
   try {
     const { topic, html, blogData, imageUrl } = await req.json();
-
+    if(!topic) {
+      return Response.json({ error: "Topic is required" });
+    }
+    if(!html) {
+      return Response.json({ error: "HTML content is required" });
+    }
+    if(!blogData) {
+      return Response.json({ error: "Blog data is required" });
+    }
     /* =========================
        ✅ 1. SLUG GENERATION
     ========================== */
@@ -17,6 +25,13 @@ export async function POST(req: Request) {
     const repo = process.env.GITHUB_REPO!;
     const token = process.env.GITHUB_TOKEN!;
 
+    if(!repo){
+      return Response.json({ error: "GitHub repository is not configured" });
+    }
+    if(!token){
+      return Response.json({ error: "GitHub token is not configured" });
+    }
+
     /* =========================
        ✅ 2. LOAD blogs.json
     ========================== */
@@ -30,11 +45,31 @@ export async function POST(req: Request) {
       }
     );
 
-    const fileData = await res.json();
+    console.log("GitHub Response Status:", res.status);
 
-    const existing = JSON.parse(
-      Buffer.from(fileData.content, "base64").toString()
+  const fileData = await res.json();
+
+  console.log(
+    "blogs.json response:",
+    JSON.stringify(fileData, null, 2)
+  );
+
+  if (!res.ok) {
+    throw new Error(
+      `GitHub API failed: ${JSON.stringify(fileData)}`
     );
+  }
+
+  if (!fileData.content) {
+    throw new Error(
+      `blogs.json content missing: ${JSON.stringify(fileData)}`
+    );
+  }
+
+  const existing = JSON.parse(
+    Buffer.from(fileData.content, "base64").toString()
+  );
+
 
     /* =========================
        ✅ 3. UPSERT BLOG META
@@ -182,36 +217,56 @@ export async function POST(req: Request) {
       console.error("Webhook trigger failed:", err);
     }
 
-    /* =========================
-       ✅ Updating Sitemap on Google
-    ========================== */
-    
-    await fetch(
-      "https://www.google.com/ping?sitemap=https://aibeyond-tech.vercel.app/sitemap.xml"
-    );
+ /* =========================
+   ✅ Updating Sitemap on Google (Improved)
+========================== */
 
-    console.log("Google sitemap pinged ✅");
+try {
+  await fetch(
+    "https://www.google.com/ping?sitemap=https://aibeyond-tech.vercel.app/sitemap.xml"
+  );
+  console.log("Google sitemap pinged ✅");
+} catch (err) {
+  console.error("Google ping failed:", err);
+}
 
-    /* =========================
-       ✅ Updating Sitemap on Bing
-    ========================== */
-    const indexNowKey = "61f44f88d4a447808e81571ce94d90b3"; // your key
 
-    await fetch("https://api.indexnow.org/indexnow", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        host: "aibeyond-tech.vercel.app",
-        key: indexNowKey,
-        urlList: [
-          `https://aibeyond-tech.vercel.app/blog/${slug}`
-        ],
-      }),
-    });
+/* =========================
+   ✅ Updating Sitemap on Bing (IndexNow - Enhanced)
+========================== */
 
-console.log("Bing IndexNow submitted ✅");
+try {
+  const indexNowKey = "61f44f88d4a447808e81571ce94d90b3";
+
+  await fetch("https://api.indexnow.org/indexnow", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      host: "aibeyond-tech.vercel.app",
+      key: indexNowKey,
+      urlList: [
+        // ✅ Main blog page
+        `https://aibeyond-tech.vercel.app/blog/${slug}`,
+
+        // ✅ Blog listing page
+        "https://aibeyond-tech.vercel.app/blog",
+
+        // ✅ Homepage (helps discovery boost)
+        "https://aibeyond-tech.vercel.app/",
+
+        // ✅ Sitemap (forces re-check)
+        "https://aibeyond-tech.vercel.app/sitemap.xml"
+      ],
+    }),
+  });
+
+  console.log("Bing IndexNow submitted ✅");
+} catch (err) {
+  console.error("Bing IndexNow failed:", err);
+}
+
 
 
     /* =========================
