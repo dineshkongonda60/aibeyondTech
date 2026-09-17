@@ -1,5 +1,19 @@
 [
   {
+    "title": "From AI Assistants to AI Agents: The Next Evolution",
+    "slug": "from-ai-assistants-to-ai-agents-the-next-evolution",
+    "description": "Explore the evolution from AI assistants to AI agents, their implications in today's world, and how they can revolutionize industries.",
+    "image": "https://images.pexels.com/photos/30530402/pexels-photo-30530402.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200",
+    "tags": [
+      "AI",
+      "Automation",
+      "Technology",
+      "Ethics",
+      "Innovation"
+    ],
+    "date": "2026-09-17T16:25:18.561Z"
+  },
+  {
     "title": "TPU vs GPU: Understanding Their Differences and Use Cases",
     "slug": "tpu-vs-gpu",
     "description": "Explore the key differences between Tensor Processing Units (TPUs) and Graphics Processing Units (GPUs), their architectures, and real-world applications in AI and deep learning.",
